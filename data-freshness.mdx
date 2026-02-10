@@ -1,0 +1,67 @@
+---
+title: "Data Freshness"
+description: "How current is the data returned by each endpoint family"
+---
+
+## Overview
+
+Data freshness varies by endpoint because each endpoint draws from a different upstream source. Every response includes a `meta.as_of` timestamp so you always know the age of the data you're working with.
+
+## Freshness by endpoint
+
+| Endpoint Family | Source | Freshness | Timestamp Field |
+|----------------|--------|-----------|-----------------|
+| **Merchants** | RiseCRM | Near real-time (< 15 min) | `meta.as_of` |
+| **Pricing (TSYS)** | BigQuery | T+1 business day | `meta.as_of` |
+| **Transactions** | BigQuery | T+1 business day | `meta.as_of` |
+| **Gateway transactions** | NMI API | Near real-time (5-min cache) | `meta.as_of` |
+| **Statements** | BigQuery + GCS | ~5 business days after month close | `available_at` |
+| **Residuals** | BigQuery | ~5 business days after month close | `data_cutoff_at` |
+| **Portfolio summary** | BigQuery | T+1, cached 15-min per org | `meta.as_of` |
+| **AI insights** | Vertex AI + BigQuery | Same as residuals, cached 1 hour | `generated_at` |
+
+## Understanding the timeline
+
+**Near real-time** endpoints (Merchants, Gateway transactions) reflect changes within minutes. If you update a merchant in your CRM, the API will show the change shortly after.
+
+**T+1** endpoints (Pricing, Transactions) are refreshed overnight. Data from Monday's transactions appears in the API on Tuesday morning.
+
+**Month-close** endpoints (Statements, Residuals) depend on processor reporting cycles. Data for January typically becomes available in the first week of February.
+
+## Checking freshness in code
+
+<CodeGroup>
+
+```python Python
+from datetime import datetime, timezone
+
+resp = requests.get(url, headers=headers).json()
+as_of = datetime.fromisoformat(resp["meta"]["as_of"])
+age = datetime.now(timezone.utc) - as_of
+
+if age.total_seconds() > 86400:  # older than 24 hours
+    print(f"Warning: data is {age.days} days old")
+```
+
+```javascript Node.js
+const { meta } = await resp.json();
+const asOf = new Date(meta.as_of);
+const ageMs = Date.now() - asOf.getTime();
+const ageHours = ageMs / (1000 * 60 * 60);
+
+if (ageHours > 24) {
+  console.warn(`Data is ${Math.floor(ageHours / 24)} days old`);
+}
+```
+
+</CodeGroup>
+
+## Residual report status
+
+Residual report endpoints include a `report_status` field that indicates completeness:
+
+| Status | Meaning |
+|--------|---------|
+| `final` | All data received and reconciled |
+| `preliminary` | Data available but may be revised |
+| `pending` | Report period not yet closed |

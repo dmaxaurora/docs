@@ -1,0 +1,79 @@
+---
+title: "Rate Limits"
+description: "Request limits, rate limit headers, and 429 handling"
+---
+
+## Limits
+
+| Scope | Limit | Window |
+|-------|-------|--------|
+| Global (all endpoints) | 120 requests | Per minute, per API key |
+| AI explain endpoint | 5 requests | Per minute, per API key |
+
+## Rate limit headers
+
+Every authenticated response includes these headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Max requests allowed per window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the window resets |
+
+Example:
+
+```
+X-RateLimit-Limit: 120
+X-RateLimit-Remaining: 87
+X-RateLimit-Reset: 1707451200
+```
+
+## Handling 429 responses
+
+When you exceed the rate limit, the API returns `429` with a `retry_after_seconds` field:
+
+```json
+{
+  "data": null,
+  "meta": { "request_id": "req_abc123", "api_version": "v2" },
+  "errors": [
+    {
+      "code": "RATE_LIMIT_EXCEEDED",
+      "message": "Rate limit exceeded. Retry after 42 seconds.",
+      "retryable": true,
+      "retry_after_seconds": 42
+    }
+  ]
+}
+```
+
+<CodeGroup>
+
+```python Python
+import time
+
+resp = requests.get(url, headers=headers)
+if resp.status_code == 429:
+    retry_after = resp.json()["errors"][0]["retry_after_seconds"]
+    time.sleep(retry_after)
+    resp = requests.get(url, headers=headers)  # retry
+```
+
+```javascript Node.js
+const resp = await fetch(url, { headers });
+if (resp.status === 429) {
+  const { errors } = await resp.json();
+  await new Promise((r) => setTimeout(r, errors[0].retry_after_seconds * 1000));
+  // retry
+}
+```
+
+</CodeGroup>
+
+## Best practices
+
+- **Check headers proactively** — Slow down when `X-RateLimit-Remaining` drops below 10
+- **Use pagination wisely** — Larger `page_size` (up to 200) means fewer requests
+- **Cache responses** — Portfolio summary and residual reports don't change frequently
+- **Use `updated_since`** — Incremental sync avoids re-fetching unchanged records
+- **Spread requests** — Avoid bursting 120 requests in the first second of a window

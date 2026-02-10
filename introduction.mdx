@@ -1,0 +1,56 @@
+---
+title: "Introduction"
+description: "Access merchant data, pricing, residuals, and AI insights through the Cadence Partner API"
+---
+
+# Cadence Partner API
+
+The Cadence Partner API gives ISO partners programmatic access to their merchant portfolio — including merchant details, transaction data, pricing breakdowns, residual reports, and AI-powered insights.
+
+## What you can do
+
+<CardGroup cols={2}>
+  <Card title="Merchants" icon="store" href="/api-reference/merchants/list">
+    Search and retrieve merchant profiles, status, and statement history across your portfolio.
+  </Card>
+  <Card title="Pricing" icon="tags" href="/api-reference/pricing/current">
+    View current IC+ pricing breakdowns and track pricing changes over time.
+  </Card>
+  <Card title="Transactions" icon="credit-card" href="/api-reference/transactions/list">
+    Access card-level transaction detail and daily aggregates, plus NMI gateway data.
+  </Card>
+  <Card title="Residuals" icon="chart-line" href="/api-reference/residuals/reports">
+    Pull monthly residual reports with per-merchant breakdowns, adjustments, and trends.
+  </Card>
+  <Card title="Statements" icon="file-lines" href="/api-reference/statements/list">
+    Retrieve statement metadata and download PDFs.
+  </Card>
+  <Card title="AI Insights" icon="sparkles" href="/api-reference/ai-insights/explain">
+    Get AI-generated portfolio analysis and merchant-level explanations.
+  </Card>
+</CardGroup>
+
+## Base URL
+
+```
+https://partner-api-6z2czs6nwa-ue.a.run.app/api/v2/partner
+```
+
+## Key features
+
+- **Consistent envelope** — Every response uses the same `data` / `meta` / `errors` shape
+- **Pagination** — All list endpoints support `page` and `page_size` params
+- **Incremental sync** — Use `updated_since` to fetch only changed records
+- **Decimal money** — All monetary values are strings (`"1234.56"`) to avoid floating-point issues
+- **Data freshness** — Every response includes `meta.as_of` so you know how current the data is
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Make your first API call in under 2 minutes.
+  </Card>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn how API keys work and how to manage them.
+  </Card>
+</CardGroup>

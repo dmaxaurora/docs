@@ -1,0 +1,144 @@
+---
+title: "Reconcile Residuals"
+description: "Monthly residual reconciliation workflow using the Partner API"
+---
+
+## Overview
+
+Each month, after your processor reports are finalized (~5 business days after month close), the residuals endpoints provide a complete breakdown of your payout. This guide walks through a full reconciliation workflow.
+
+## Step 1: List available reports
+
+Check which monthly reports are available:
+
+<CodeGroup>
+
+```python Python
+resp = requests.get(f"{BASE}/residuals/reports", headers=HEADERS).json()
+for report in resp["data"]:
+    print(f"{report['year']}-{report['month']:02d}: {report['status']}")
+```
+
+```bash cURL
+curl -H "X-Partner-API-Key: pk_live_YOUR_KEY_HERE" \
+  "https://partner-api-6z2czs6nwa-ue.a.run.app/api/v2/partner/residuals/reports"
+```
+
+</CodeGroup>
+
+Only process reports with status `final` for reconciliation. `preliminary` reports may still be revised.
+
+## Step 2: Get the monthly summary
+
+Pull high-level totals for a specific month:
+
+```python
+summary = requests.get(
+    f"{BASE}/residuals/reports/2026/1/summary",
+    headers=HEADERS
+).json()["data"]
+
+print(f"Volume:     ${summary['total_volume']}")
+print(f"Merchants:  {summary['merchant_count']}")
+print(f"Payout:     ${summary['total_payout']}")
+```
+
+## Step 3: Pull per-merchant breakdown
+
+Page through the merchant-level detail:
+
+```python
+page = 1
+merchants = []
+
+while True:
+    resp = requests.get(
+        f"{BASE}/residuals/reports/2026/1/merchants",
+        headers=HEADERS,
+        params={"page": page, "page_size": 200}
+    ).json()
+
+    merchants.extend(resp["data"])
+
+    if page >= resp["meta"]["pagination"]["total_pages"]:
+        break
+    page += 1
+
+# Verify totals match summary
+calculated_volume = sum(float(m["volume"]) for m in merchants)
+print(f"Calculated volume: ${calculated_volume:.2f}")
+```
+
+## Step 4: Check adjustments and withholds
+
+<CodeGroup>
+
+```python Adjustments
+adjustments = requests.get(
+    f"{BASE}/residuals/reports/2026/1/adjustments",
+    headers=HEADERS
+).json()["data"]
+
+for adj in adjustments:
+    print(f"{adj['description']}: ${adj['amount']}")
+```
+
+```python Withholds
+withholds = requests.get(
+    f"{BASE}/residuals/reports/2026/1/withholds",
+    headers=HEADERS
+).json()["data"]
+
+for wh in withholds:
+    print(f"{wh['description']}: ${wh['amount']}")
+```
+
+</CodeGroup>
+
+## Step 5: Verify payout
+
+```python
+merchant_total = sum(float(m["payout"]) for m in merchants)
+adjustment_total = sum(float(a["amount"]) for a in adjustments)
+withhold_total = sum(float(w["amount"]) for w in withholds)
+
+expected_payout = merchant_total + adjustment_total - withhold_total
+actual_payout = float(summary["total_payout"])
+
+diff = abs(expected_payout - actual_payout)
+if diff < 0.01:
+    print("Reconciliation passed")
+else:
+    print(f"Discrepancy: ${diff:.2f}")
+```
+
+## Step 6: Export for records
+
+For large portfolios, use the async export to get a CSV:
+
+```python
+# Create export
+export = requests.post(
+    f"{BASE}/residuals/reports/2026/1/merchants/export",
+    headers=HEADERS
+).json()["data"]
+
+export_id = export["export_id"]
+```
+
+Then poll and download — see the [Export Data](/guides/export-data) guide.
+
+## Trend analysis
+
+Use the trend endpoint to compare months:
+
+```python
+trend = requests.get(
+    f"{BASE}/residuals/reports/trend",
+    headers=HEADERS,
+    params={"months": 6}
+).json()["data"]
+
+for month in trend:
+    print(f"{month['period']}: ${month['total_payout']} ({month['merchant_count']} merchants)")
+```

@@ -1,0 +1,145 @@
+---
+title: "Sync Merchants"
+description: "Build an incremental sync pipeline for your merchant portfolio"
+---
+
+## Overview
+
+Rather than fetching all merchants on every sync, use `updated_since` to pull only records that changed since your last sync. This reduces API calls and keeps you well within rate limits.
+
+## Full sync (first run)
+
+On your first sync, page through all merchants:
+
+<CodeGroup>
+
+```python Python
+import requests
+
+BASE = "https://partner-api-6z2czs6nwa-ue.a.run.app/api/v2/partner"
+HEADERS = {"X-Partner-API-Key": "pk_live_YOUR_KEY_HERE"}
+
+def full_sync():
+    merchants = []
+    page = 1
+
+    while True:
+        resp = requests.get(
+            f"{BASE}/merchants",
+            headers=HEADERS,
+            params={"page": page, "page_size": 200}
+        ).json()
+
+        merchants.extend(resp["data"])
+        last_sync = resp["meta"]["as_of"]
+
+        if page >= resp["meta"]["pagination"]["total_pages"]:
+            break
+        page += 1
+
+    return merchants, last_sync
+```
+
+```javascript Node.js
+const BASE = "https://partner-api-6z2czs6nwa-ue.a.run.app/api/v2/partner";
+const HEADERS = { "X-Partner-API-Key": "pk_live_YOUR_KEY_HERE" };
+
+async function fullSync() {
+  const merchants = [];
+  let page = 1;
+  let lastSync;
+
+  while (true) {
+    const resp = await fetch(
+      `${BASE}/merchants?page=${page}&page_size=200`,
+      { headers: HEADERS }
+    );
+    const { data, meta } = await resp.json();
+
+    merchants.push(...data);
+    lastSync = meta.as_of;
+
+    if (page >= meta.pagination.total_pages) break;
+    page++;
+  }
+
+  return { merchants, lastSync };
+}
+```
+
+</CodeGroup>
+
+## Incremental sync (subsequent runs)
+
+Pass `updated_since` with the `as_of` timestamp from your last sync:
+
+<CodeGroup>
+
+```python Python
+def incremental_sync(last_sync_timestamp):
+    updated = []
+    page = 1
+
+    while True:
+        resp = requests.get(
+            f"{BASE}/merchants",
+            headers=HEADERS,
+            params={
+                "page": page,
+                "page_size": 200,
+                "updated_since": last_sync_timestamp
+            }
+        ).json()
+
+        updated.extend(resp["data"])
+        new_sync = resp["meta"]["as_of"]
+
+        if page >= resp["meta"]["pagination"]["total_pages"]:
+            break
+        page += 1
+
+    return updated, new_sync
+```
+
+```javascript Node.js
+async function incrementalSync(lastSyncTimestamp) {
+  const updated = [];
+  let page = 1;
+  let newSync;
+
+  while (true) {
+    const resp = await fetch(
+      `${BASE}/merchants?page=${page}&page_size=200&updated_since=${lastSyncTimestamp}`,
+      { headers: HEADERS }
+    );
+    const { data, meta } = await resp.json();
+
+    updated.push(...data);
+    newSync = meta.as_of;
+
+    if (page >= meta.pagination.total_pages) break;
+    page++;
+  }
+
+  return { updated, newSync };
+}
+```
+
+</CodeGroup>
+
+## Recommended schedule
+
+| Portfolio size | Sync frequency | Estimated calls/day |
+|---------------|---------------|-------------------|
+| < 1,000 merchants | Every 4 hours | ~6 |
+| 1,000–5,000 | Every 2 hours | ~24 |
+| 5,000+ | Every hour | ~48 |
+
+Incremental syncs typically return a small fraction of your portfolio, so even hourly syncs stay well within the 120 req/min rate limit.
+
+## Tips
+
+- **Store `as_of`** from each sync response as your next `updated_since` value
+- **Upsert, don't replace** — Incremental results contain only changed records
+- **Filter by status** — Use `?status=active` if you only care about active merchants
+- **Handle pagination** — Even incremental results can span multiple pages after bulk updates

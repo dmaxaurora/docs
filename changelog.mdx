@@ -1,0 +1,22 @@
+---
+title: "Changelog"
+description: "Version history for the Cadence Partner API"
+---
+
+## February 2026
+
+### v2.0.0 — Initial release
+
+The Cadence Partner API v2 is now available. This release includes:
+
+- **Merchants** — List, search, and retrieve merchant profiles and status
+- **Pricing** — Current IC+ pricing breakdowns and pricing change history
+- **Transactions** — Card-level detail, daily aggregates, and NMI gateway transactions
+- **Statements** — Statement metadata and PDF downloads
+- **Portfolio** — Org-wide summary metrics
+- **Residuals** — Monthly reports with per-merchant breakdowns, adjustments, withholds, trends, and top merchants
+- **Exports** — Async CSV export for residual merchant data
+- **AI Insights** — AI-generated portfolio analysis via the explain endpoint
+- **Authentication** — API key auth with SHA-256 hashed storage
+- **Rate limiting** — 120 req/min global, 5 req/min for AI endpoints
+- **Consistent envelope** — Unified `data` / `meta` / `errors` response format across all endpoints

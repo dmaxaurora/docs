@@ -1,0 +1,79 @@
+---
+title: "AI Insights"
+description: "Get AI-generated portfolio analysis and merchant explanations"
+---
+
+## Overview
+
+The AI explain endpoint uses Vertex AI to generate natural-language analysis of your residual portfolio. It's designed for embedding in partner-facing dashboards or reports.
+
+## Making a request
+
+<CodeGroup>
+
+```python Python
+resp = requests.post(
+    f"{BASE}/residuals/explain",
+    headers=HEADERS,
+    json={
+        "year": 2026,
+        "month": 1,
+        "question": "Why did my payout decrease this month?"
+    }
+).json()
+
+print(resp["data"]["explanation"])
+```
+
+```bash cURL
+curl -X POST \
+  -H "X-Partner-API-Key: pk_live_YOUR_KEY_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{"year": 2026, "month": 1, "question": "Why did my payout decrease this month?"}' \
+  "https://partner-api-6z2czs6nwa-ue.a.run.app/api/v2/partner/residuals/explain"
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "data": {
+    "explanation": "Your January payout decreased by $2,340 compared to December...",
+    "generated_at": "2026-02-09T14:30:00Z",
+    "model": "gemini-2.0-flash"
+  },
+  "meta": {
+    "request_id": "req_abc123",
+    "api_version": "v2"
+  },
+  "errors": []
+}
+```
+
+## Rate limits
+
+The AI explain endpoint has a stricter rate limit than other endpoints:
+
+| Limit | Value |
+|-------|-------|
+| AI explain | **5 requests per minute** per API key |
+| Global | 120 requests per minute per API key |
+
+If you exceed the AI limit, you'll receive a `429 RATE_LIMIT_EXCEEDED` response with `retry_after_seconds`.
+
+## Example questions
+
+| Question | What you get |
+|----------|-------------|
+| "Summarize my portfolio performance" | High-level volume, payout, and merchant count trends |
+| "Why did my payout decrease?" | Analysis of merchant attrition, volume changes, and fee adjustments |
+| "Which merchants should I focus on?" | Identifies high-growth or at-risk merchants |
+| "Compare this month to last month" | Month-over-month delta analysis |
+
+## Tips
+
+- **Cache responses** — AI insights are cached for 1 hour server-side. Repeated identical requests within that window are fast and don't count against your AI rate limit.
+- **Be specific** — More specific questions produce more actionable responses
+- **Use with residual data** — Pair AI insights with the [Reconcile Residuals](/guides/reconcile-residuals) workflow for a complete picture

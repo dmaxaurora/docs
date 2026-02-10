@@ -1,0 +1,78 @@
+---
+title: "Authentication"
+description: "API key authentication for the Cadence Partner API"
+---
+
+## API keys
+
+All requests (except `/health`) require an API key passed in the `X-Partner-API-Key` header:
+
+```bash
+curl -H "X-Partner-API-Key: pk_live_YOUR_KEY_HERE" \
+  https://partner-api-6z2czs6nwa-ue.a.run.app/api/v2/partner/merchants
+```
+
+### Key format
+
+Keys use the prefix `pk_live_` followed by a random hex string. Example:
+
+```
+pk_live_6475dfd7a1b2c3d4e5f6...
+```
+
+### Creating keys
+
+API keys are created in the **Cadence admin UI**:
+
+1. Navigate to **Organizations** and select your organization
+2. Open the **API Keys** card
+3. Click **Create API Key**
+4. Copy the key immediately — it is only shown once
+
+### Security
+
+- Keys are SHA-256 hashed before storage — Cadence never stores your plaintext key
+- Keys are scoped to your organization and can only access merchants in your portfolio
+- Attempting to access a merchant outside your portfolio returns `403 MERCHANT_NOT_IN_PORTFOLIO`
+
+### Scopes
+
+| Scope | Description | Default |
+|-------|-------------|---------|
+| `partner:read` | Read access to all endpoints | Yes |
+
+Additional scopes will be added as write endpoints are introduced.
+
+## Error responses
+
+<ResponseExample>
+```json 401 — Missing or invalid key
+{
+  "data": null,
+  "meta": { "request_id": "req_abc123", "api_version": "v2" },
+  "errors": [
+    {
+      "code": "AUTHENTICATION_REQUIRED",
+      "message": "Missing or invalid API key",
+      "retryable": false
+    }
+  ]
+}
+```
+</ResponseExample>
+
+<ResponseExample>
+```json 403 — Merchant not in portfolio
+{
+  "data": null,
+  "meta": { "request_id": "req_abc123", "api_version": "v2" },
+  "errors": [
+    {
+      "code": "MERCHANT_NOT_IN_PORTFOLIO",
+      "message": "Merchant exists but does not belong to your organization",
+      "retryable": false
+    }
+  ]
+}
+```
+</ResponseExample>

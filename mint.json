@@ -1,0 +1,146 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Cadence Partner API",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#122B47",
+    "light": "#0879AB",
+    "dark": "#122B47",
+    "anchors": {
+      "from": "#0879AB",
+      "to": "#122B47"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@sellcadence.com"
+    }
+  ],
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Guides",
+      "url": "guides"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "authentication"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "response-format",
+        "error-handling",
+        "rate-limits",
+        "data-freshness"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/sync-merchants",
+        "guides/reconcile-residuals",
+        "guides/export-data",
+        "guides/ai-insights"
+      ]
+    },
+    {
+      "group": "Merchants",
+      "pages": [
+        "api-reference/merchants/list",
+        "api-reference/merchants/get",
+        "api-reference/merchants/status"
+      ]
+    },
+    {
+      "group": "Pricing",
+      "pages": [
+        "api-reference/pricing/current",
+        "api-reference/pricing/history"
+      ]
+    },
+    {
+      "group": "Transactions",
+      "pages": [
+        "api-reference/transactions/list",
+        "api-reference/transactions/daily",
+        "api-reference/transactions/gateway-list",
+        "api-reference/transactions/gateway-get"
+      ]
+    },
+    {
+      "group": "Statements",
+      "pages": [
+        "api-reference/statements/list",
+        "api-reference/statements/get",
+        "api-reference/statements/pdf"
+      ]
+    },
+    {
+      "group": "Portfolio",
+      "pages": [
+        "api-reference/portfolio/summary"
+      ]
+    },
+    {
+      "group": "Residuals",
+      "pages": [
+        "api-reference/residuals/reports",
+        "api-reference/residuals/trend",
+        "api-reference/residuals/summary",
+        "api-reference/residuals/merchants",
+        "api-reference/residuals/adjustments",
+        "api-reference/residuals/withholds",
+        "api-reference/residuals/top-merchants"
+      ]
+    },
+    {
+      "group": "Exports",
+      "pages": [
+        "api-reference/exports/create",
+        "api-reference/exports/status",
+        "api-reference/exports/download"
+      ]
+    },
+    {
+      "group": "AI Insights",
+      "pages": [
+        "api-reference/ai-insights/explain"
+      ]
+    },
+    {
+      "group": "System",
+      "pages": [
+        "api-reference/system/health"
+      ]
+    },
+    {
+      "group": "Resources",
+      "pages": [
+        "changelog"
+      ]
+    }
+  ],
+  "openapi": "openapi.json",
+  "api": {
+    "baseUrl": "https://partner-api-6z2czs6nwa-ue.a.run.app",
+    "auth": {
+      "method": "key",
+      "name": "X-Partner-API-Key"
+    }
+  }
+}

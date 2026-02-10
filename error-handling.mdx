@@ -1,0 +1,118 @@
+---
+title: "Error Handling"
+description: "Error codes, response format, and retry strategies"
+---
+
+## Error response format
+
+When an error occurs, `data` is `null` and the `errors` array contains one or more error objects:
+
+```json
+{
+  "data": null,
+  "meta": {
+    "request_id": "req_abc123",
+    "api_version": "v2"
+  },
+  "errors": [
+    {
+      "code": "RATE_LIMIT_EXCEEDED",
+      "message": "Rate limit exceeded. Retry after 42 seconds.",
+      "field": null,
+      "retryable": true,
+      "retry_after_seconds": 42
+    }
+  ]
+}
+```
+
+## Error codes
+
+| Code | HTTP | Description | Retryable |
+|------|------|-------------|-----------|
+| `AUTHENTICATION_REQUIRED` | 401 | Missing or invalid API key | No |
+| `INSUFFICIENT_SCOPE` | 403 | Key lacks the required scope | No |
+| `MERCHANT_NOT_IN_PORTFOLIO` | 403 | Merchant exists but belongs to a different org | No |
+| `RESOURCE_NOT_FOUND` | 404 | Merchant, statement, or export not found | No |
+| `VALIDATION_ERROR` | 422 | Invalid query parameters (bad date, pagination, etc.) | No |
+| `RATE_LIMIT_EXCEEDED` | 429 | Over the request limit for your key | Yes |
+| `UPSTREAM_UNAVAILABLE` | 503 | Data source temporarily down | Yes |
+| `SERVICE_UNAVAILABLE` | 503 | Service-level issue | Yes |
+| `INTERNAL_ERROR` | 500 | Unexpected server error | Yes |
+
+## Retry strategy
+
+For errors with `"retryable": true`, use exponential backoff:
+
+<CodeGroup>
+
+```python Python
+import time
+import requests
+
+def api_request(url, headers, max_retries=3):
+    for attempt in range(max_retries):
+        resp = requests.get(url, headers=headers)
+
+        if resp.status_code == 429:
+            retry_after = resp.json()["errors"][0].get("retry_after_seconds", 60)
+            time.sleep(retry_after)
+            continue
+
+        if resp.status_code >= 500:
+            time.sleep(2 ** attempt)
+            continue
+
+        return resp.json()
+
+    raise Exception("Max retries exceeded")
+```
+
+```javascript Node.js
+async function apiRequest(url, headers, maxRetries = 3) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const resp = await fetch(url, { headers });
+
+    if (resp.status === 429) {
+      const { errors } = await resp.json();
+      const retryAfter = errors[0]?.retry_after_seconds ?? 60;
+      await new Promise((r) => setTimeout(r, retryAfter * 1000));
+      continue;
+    }
+
+    if (resp.status >= 500) {
+      await new Promise((r) => setTimeout(r, 2 ** attempt * 1000));
+      continue;
+    }
+
+    return resp.json();
+  }
+  throw new Error("Max retries exceeded");
+}
+```
+
+</CodeGroup>
+
+## Validation errors
+
+`VALIDATION_ERROR` responses include a `field` property indicating which parameter failed:
+
+```json
+{
+  "errors": [
+    {
+      "code": "VALIDATION_ERROR",
+      "message": "page_size must be between 1 and 200",
+      "field": "page_size",
+      "retryable": false
+    }
+  ]
+}
+```
+
+## Tips
+
+- Always check `errors.length > 0` before accessing `data`
+- Use `meta.request_id` when contacting support — it uniquely identifies the request
+- For `429` responses, prefer the `retry_after_seconds` value over a fixed delay
+- For `503` responses, retry with exponential backoff (1s, 2s, 4s)
