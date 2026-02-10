@@ -132,10 +132,6 @@
   ],
   "openapi": "openapi.json",
   "api": {
-    "baseUrl": "https://api.modulate.aurorapayments.net",
-    "auth": {
-      "method": "key",
-      "name": "X-Partner-API-Key"
-    }
+    "baseUrl": "https://api.modulate.aurorapayments.net"
   }
 }

@@ -5,6 +5,11 @@
         "description": "External API for ISO partners to access merchant data, pricing, and reports",
         "version": "0.1.0"
     },
+    "security": [
+        {
+            "apiKey": []
+        }
+    ],
     "paths": {
         "/api/v2/partner/health": {
             "get": {
@@ -2400,6 +2405,13 @@
         }
     },
     "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-Partner-API-Key"
+            }
+        },
         "schemas": {
             "HTTPValidationError": {
                 "properties": {
