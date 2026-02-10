@@ -1,6 +1,6 @@
 ---
 title: "Authentication"
-description: "API key authentication for the Cadence Partner API"
+description: "API key authentication for the Modulate Partner API"
 ---
 
 ## API keys
@@ -22,7 +22,7 @@ pk_live_6475dfd7a1b2c3d4e5f6...
 
 ### Creating keys
 
-API keys are created in the **Cadence admin UI**:
+API keys are created in the **Modulate admin UI**:
 
 1. Navigate to **Organizations** and select your organization
 2. Open the **API Keys** card
@@ -31,7 +31,7 @@ API keys are created in the **Cadence admin UI**:
 
 ### Security
 
-- Keys are SHA-256 hashed before storage — Cadence never stores your plaintext key
+- Keys are SHA-256 hashed before storage — Modulate never stores your plaintext key
 - Keys are scoped to your organization and can only access merchants in your portfolio
 - Attempting to access a merchant outside your portfolio returns `403 MERCHANT_NOT_IN_PORTFOLIO`
 

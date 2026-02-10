@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Cadence Partner API",
+  "name": "Modulate",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
@@ -15,12 +15,7 @@
       "to": "#122B47"
     }
   },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "mailto:support@sellcadence.com"
-    }
-  ],
+  "topbarLinks": [],
   "tabs": [
     {
       "name": "API Reference",
