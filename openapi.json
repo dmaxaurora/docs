@@ -1,2471 +1,2564 @@
 {
-    "openapi": "3.1.0",
-    "info": {
-        "title": "Partner API",
-        "description": "External API for ISO partners to access merchant data, pricing, and reports",
-        "version": "0.1.0"
-    },
-    "security": [
-        {
-            "apiKey": []
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Partner API",
+    "description": "External API for ISO partners to access merchant data, pricing, and reports",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v2/partner/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health check",
+        "description": "Returns service status and database connectivity. No authentication required.",
+        "operationId": "health_check_api_v2_partner_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "503": {
+            "description": "Service degraded"
+          }
         }
-    ],
-    "paths": {
-        "/api/v2/partner/health": {
-            "get": {
-                "tags": [
-                    "Health"
-                ],
-                "summary": "Health check",
-                "description": "Returns service status and database connectivity. No authentication required.",
-                "operationId": "health_check_api_v2_partner_health_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "503": {
-                        "description": "Service degraded"
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants": {
-            "get": {
-                "tags": [
-                    "Merchants",
-                    "Merchants"
-                ],
-                "summary": "List merchants",
-                "description": "Paginated list of merchants in the partner's portfolio with filtering and sorting.",
-                "operationId": "list_merchants_api_v2_partner_merchants_get",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Page number",
-                            "default": 1,
-                            "title": "Page"
-                        },
-                        "description": "Page number",
-                        "example": 1
-                    },
-                    {
-                        "name": "page_size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "description": "Items per page",
-                            "default": 25,
-                            "title": "Page Size"
-                        },
-                        "description": "Items per page",
-                        "example": 25
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(active|closed|terminated)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by merchant status",
-                            "title": "Status"
-                        },
-                        "description": "Filter by merchant status"
-                    },
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 200
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Search by DBA name or merchant ID",
-                            "title": "Search"
-                        },
-                        "description": "Search by DBA name or merchant ID"
-                    },
-                    {
-                        "name": "updated_since",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "ISO-8601 timestamp for incremental sync",
-                            "title": "Updated Since"
-                        },
-                        "description": "ISO-8601 timestamp for incremental sync"
-                    },
-                    {
-                        "name": "sort_by",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(dba_name|merchant_id|status|onboarding_date|state)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Sort field",
-                            "default": "dba_name",
-                            "title": "Sort By"
-                        },
-                        "description": "Sort field"
-                    },
-                    {
-                        "name": "sort_order",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(asc|desc)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Sort direction",
-                            "default": "asc",
-                            "title": "Sort Order"
-                        },
-                        "description": "Sort direction"
-                    },
-                    {
-                        "name": "compliance_status",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(compliant|non_compliant|not_started)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by PCI compliance status",
-                            "title": "Compliance Status"
-                        },
-                        "description": "Filter by PCI compliance status"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Merchant data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}": {
-            "get": {
-                "tags": [
-                    "Merchants",
-                    "Merchants"
-                ],
-                "summary": "Get merchant detail",
-                "description": "Returns full detail for a single merchant in the partner's portfolio.",
-                "operationId": "get_merchant_api_v2_partner_merchants__merchant_id__get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Merchant data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/status": {
-            "get": {
-                "tags": [
-                    "Merchants",
-                    "Merchants"
-                ],
-                "summary": "Get merchant status",
-                "description": "Returns a concise status summary for a merchant.",
-                "operationId": "get_merchant_status_api_v2_partner_merchants__merchant_id__status_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Merchant data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/compliance": {
-            "get": {
-                "tags": [
-                    "Compliance",
-                    "Compliance"
-                ],
-                "summary": "Get merchant compliance status",
-                "description": "Returns current PCI compliance status for a merchant in the partner's portfolio.",
-                "operationId": "get_compliance_status_api_v2_partner_merchants__merchant_id__compliance_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Compliance data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/compliance/history": {
-            "get": {
-                "tags": [
-                    "Compliance",
-                    "Compliance"
-                ],
-                "summary": "Get merchant compliance history",
-                "description": "Returns paginated compliance history for a merchant with optional date range filtering.",
-                "operationId": "get_compliance_history_api_v2_partner_merchants__merchant_id__compliance_history_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID"
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Page number",
-                            "default": 1,
-                            "title": "Page"
-                        },
-                        "description": "Page number"
-                    },
-                    {
-                        "name": "page_size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "description": "Items per page",
-                            "default": 25,
-                            "title": "Page Size"
-                        },
-                        "description": "Items per page"
-                    },
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Start date filter (ISO-8601)",
-                            "title": "Start Date"
-                        },
-                        "description": "Start date filter (ISO-8601)"
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "End date filter (ISO-8601)",
-                            "title": "End Date"
-                        },
-                        "description": "End date filter (ISO-8601)"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Compliance data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/pricing/tsys/current": {
-            "get": {
-                "tags": [
-                    "Pricing",
-                    "Pricing"
-                ],
-                "summary": "Get current TSYS pricing",
-                "description": "Returns the current TSYS PPM pricing configuration for a merchant.",
-                "operationId": "get_current_pricing_api_v2_partner_merchants__merchant_id__pricing_tsys_current_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Pricing data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/pricing/tsys/history": {
-            "get": {
-                "tags": [
-                    "Pricing",
-                    "Pricing"
-                ],
-                "summary": "Get TSYS pricing history",
-                "description": "Returns pricing change history for a merchant over a configurable lookback period.",
-                "operationId": "get_pricing_history_api_v2_partner_merchants__merchant_id__pricing_tsys_history_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "months",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 36,
-                            "minimum": 1,
-                            "description": "Lookback period in months",
-                            "default": 12,
-                            "title": "Months"
-                        },
-                        "description": "Lookback period in months",
-                        "example": 12
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Pricing data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/transactions/daily": {
-            "get": {
-                "tags": [
-                    "Transactions",
-                    "Transactions"
-                ],
-                "summary": "Get daily transaction summary",
-                "description": "Returns daily aggregated transaction totals for a merchant over a date range.",
-                "operationId": "get_daily_transactions_api_v2_partner_merchants__merchant_id__transactions_daily_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "date_from",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Start date (YYYY-MM-DD)",
-                            "title": "Date From"
-                        },
-                        "description": "Start date (YYYY-MM-DD)",
-                        "example": "2025-01-01"
-                    },
-                    {
-                        "name": "date_to",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "End date (YYYY-MM-DD)",
-                            "title": "Date To"
-                        },
-                        "description": "End date (YYYY-MM-DD)",
-                        "example": "2025-01-31"
-                    },
-                    {
-                        "name": "timezone",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 50
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "IANA timezone for date boundaries",
-                            "default": "UTC",
-                            "title": "Timezone"
-                        },
-                        "description": "IANA timezone for date boundaries"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Transaction data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/transactions": {
-            "get": {
-                "tags": [
-                    "Transactions",
-                    "Transactions"
-                ],
-                "summary": "List transactions",
-                "description": "Paginated transaction detail list for a merchant with card brand and batch filters.",
-                "operationId": "get_transactions_api_v2_partner_merchants__merchant_id__transactions_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "date_from",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Start date (YYYY-MM-DD)",
-                            "title": "Date From"
-                        },
-                        "description": "Start date (YYYY-MM-DD)",
-                        "example": "2025-01-01"
-                    },
-                    {
-                        "name": "date_to",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "End date (YYYY-MM-DD)",
-                            "title": "Date To"
-                        },
-                        "description": "End date (YYYY-MM-DD)",
-                        "example": "2025-01-31"
-                    },
-                    {
-                        "name": "timezone",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 50
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "IANA timezone for date boundaries",
-                            "default": "UTC",
-                            "title": "Timezone"
-                        },
-                        "description": "IANA timezone for date boundaries"
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Page number",
-                            "default": 1,
-                            "title": "Page"
-                        },
-                        "description": "Page number",
-                        "example": 1
-                    },
-                    {
-                        "name": "page_size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "description": "Items per page",
-                            "default": 25,
-                            "title": "Page Size"
-                        },
-                        "description": "Items per page",
-                        "example": 25
-                    },
-                    {
-                        "name": "card_brand",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 50
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by card brand (Visa, Mastercard, etc.)",
-                            "title": "Card Brand"
-                        },
-                        "description": "Filter by card brand (Visa, Mastercard, etc.)"
-                    },
-                    {
-                        "name": "card_type",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 50
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by card type (credit, debit)",
-                            "title": "Card Type"
-                        },
-                        "description": "Filter by card type (credit, debit)"
-                    },
-                    {
-                        "name": "batch_id",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 100
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by settlement batch ID",
-                            "title": "Batch Id"
-                        },
-                        "description": "Filter by settlement batch ID"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Transaction data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/gateway-transactions": {
-            "get": {
-                "tags": [
-                    "Gateway Transactions",
-                    "Gateway Transactions"
-                ],
-                "summary": "List gateway transactions",
-                "description": "Paginated NMI gateway transactions for a merchant with action type and status filters.",
-                "operationId": "list_gateway_transactions_api_v2_partner_merchants__merchant_id__gateway_transactions_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Page number",
-                            "default": 1,
-                            "title": "Page"
-                        },
-                        "description": "Page number",
-                        "example": 1
-                    },
-                    {
-                        "name": "page_size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "description": "Items per page",
-                            "default": 25,
-                            "title": "Page Size"
-                        },
-                        "description": "Items per page",
-                        "example": 25
-                    },
-                    {
-                        "name": "days",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 365,
-                            "minimum": 1,
-                            "description": "Lookback period in days",
-                            "default": 30,
-                            "title": "Days"
-                        },
-                        "description": "Lookback period in days",
-                        "example": 30
-                    },
-                    {
-                        "name": "action_type",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(sale|refund|void|auth|capture)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by action type",
-                            "title": "Action Type"
-                        },
-                        "description": "Filter by action type"
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(complete|pending|failed|pendingsettlement)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by status",
-                            "title": "Status"
-                        },
-                        "description": "Filter by status"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Gateway transaction service unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/gateway-transactions/{gateway_txn_id}": {
-            "get": {
-                "tags": [
-                    "Gateway Transactions",
-                    "Gateway Transactions"
-                ],
-                "summary": "Get gateway transaction",
-                "description": "Returns detail for a single NMI gateway transaction.",
-                "operationId": "get_gateway_transaction_api_v2_partner_merchants__merchant_id__gateway_transactions__gateway_txn_id__get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "gateway_txn_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 100,
-                            "description": "Gateway transaction ID",
-                            "title": "Gateway Txn Id"
-                        },
-                        "description": "Gateway transaction ID"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "404": {
-                        "description": "Transaction not found"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Gateway transaction service unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/statements": {
-            "get": {
-                "tags": [
-                    "Statements",
-                    "Statements"
-                ],
-                "summary": "List statements",
-                "description": "Paginated list of processor and custom statements for a merchant.",
-                "operationId": "list_statements_api_v2_partner_merchants__merchant_id__statements_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Page number",
-                            "default": 1,
-                            "title": "Page"
-                        },
-                        "description": "Page number",
-                        "example": 1
-                    },
-                    {
-                        "name": "page_size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "description": "Items per page",
-                            "default": 25,
-                            "title": "Page Size"
-                        },
-                        "description": "Items per page",
-                        "example": 25
-                    },
-                    {
-                        "name": "year",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "integer",
-                                    "maximum": 2100,
-                                    "minimum": 2000
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by year",
-                            "title": "Year"
-                        },
-                        "description": "Filter by year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "integer",
-                                    "maximum": 12,
-                                    "minimum": 1
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by month",
-                            "title": "Month"
-                        },
-                        "description": "Filter by month",
-                        "example": 1
-                    },
-                    {
-                        "name": "statement_type",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(standard|custom)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Filter by statement type",
-                            "title": "Statement Type"
-                        },
-                        "description": "Filter by statement type"
-                    },
-                    {
-                        "name": "updated_since",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "ISO-8601 timestamp for incremental sync",
-                            "title": "Updated Since"
-                        },
-                        "description": "ISO-8601 timestamp for incremental sync"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Statement data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/statements/{statement_id}": {
-            "get": {
-                "tags": [
-                    "Statements",
-                    "Statements"
-                ],
-                "summary": "Get statement metadata",
-                "description": "Returns metadata for a single statement including period, type, and availability.",
-                "operationId": "get_statement_api_v2_partner_merchants__merchant_id__statements__statement_id__get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "statement_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 200,
-                            "description": "Statement ID",
-                            "title": "Statement Id"
-                        },
-                        "description": "Statement ID"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "404": {
-                        "description": "Statement not found"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Statement data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/merchants/{merchant_id}/statements/{statement_id}/pdf": {
-            "get": {
-                "tags": [
-                    "Statements",
-                    "Statements"
-                ],
-                "summary": "Download statement PDF",
-                "description": "Download a statement as raw PDF stream or base64-encoded JSON. Use ?format=base64 for JSON delivery.",
-                "operationId": "get_statement_pdf_api_v2_partner_merchants__merchant_id__statements__statement_id__pdf_get",
-                "parameters": [
-                    {
-                        "name": "merchant_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 50,
-                            "description": "Merchant ID",
-                            "title": "Merchant Id"
-                        },
-                        "description": "Merchant ID",
-                        "example": "1234567890"
-                    },
-                    {
-                        "name": "statement_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 200,
-                            "description": "Statement ID",
-                            "title": "Statement Id"
-                        },
-                        "description": "Statement ID"
-                    },
-                    {
-                        "name": "format",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(stream|base64)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Delivery format: stream (raw PDF) or base64 (JSON envelope)",
-                            "default": "stream",
-                            "title": "Format"
-                        },
-                        "description": "Delivery format: stream (raw PDF) or base64 (JSON envelope)"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Merchant not in portfolio or insufficient scope"
-                    },
-                    "404": {
-                        "description": "Statement PDF not found"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Statement PDF source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/portfolio/summary": {
-            "get": {
-                "tags": [
-                    "Portfolio",
-                    "Portfolio"
-                ],
-                "summary": "Get portfolio summary",
-                "description": "Aggregated KPIs across all merchants in the partner's portfolio. Cached 15 minutes per org.",
-                "operationId": "get_portfolio_summary_api_v2_partner_portfolio_summary_get",
-                "parameters": [
-                    {
-                        "name": "period",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "pattern": "^(current_month|last_month|last_30_days)$"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "Aggregation period",
-                            "default": "last_30_days",
-                            "title": "Period"
-                        },
-                        "description": "Aggregation period",
-                        "example": "last_30_days"
-                    },
-                    {
-                        "name": "timezone",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "maxLength": 50
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "IANA timezone for period boundaries",
-                            "default": "UTC",
-                            "title": "Timezone"
-                        },
-                        "description": "IANA timezone for period boundaries"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "403": {
-                        "description": "Insufficient scope"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Portfolio data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "List available reports",
-                "description": "Returns the list of available residual report months for the partner's organization.",
-                "operationId": "list_available_reports_api_v2_partner_residuals_reports_get",
-                "parameters": [
-                    {
-                        "name": "updated_since",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "ISO-8601 timestamp for incremental sync",
-                            "title": "Updated Since"
-                        },
-                        "description": "ISO-8601 timestamp for incremental sync"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/{year}/{month}/summary": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get payout summary",
-                "description": "Returns aggregated payout summary including volume, profit, and agent payout for a month.",
-                "operationId": "get_payout_summary_api_v2_partner_residuals_reports__year___month__summary_get",
-                "parameters": [
-                    {
-                        "name": "year",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 2100,
-                            "minimum": 2000,
-                            "description": "Report year",
-                            "title": "Year"
-                        },
-                        "description": "Report year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 12,
-                            "minimum": 1,
-                            "description": "Report month",
-                            "title": "Month"
-                        },
-                        "description": "Report month",
-                        "example": 1
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "404": {
-                        "description": "No residual data for the specified period"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/{year}/{month}/merchants": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get merchant residuals",
-                "description": "Paginated merchant-level residual details with search, sort, and incremental sync support.",
-                "operationId": "get_merchant_residuals_api_v2_partner_residuals_reports__year___month__merchants_get",
-                "parameters": [
-                    {
-                        "name": "year",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 2100,
-                            "minimum": 2000,
-                            "description": "Report year",
-                            "title": "Year"
-                        },
-                        "description": "Report year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 12,
-                            "minimum": 1,
-                            "description": "Report month",
-                            "title": "Month"
-                        },
-                        "description": "Report month",
-                        "example": 1
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Page number",
-                            "default": 1,
-                            "title": "Page"
-                        },
-                        "description": "Page number",
-                        "example": 1
-                    },
-                    {
-                        "name": "page_size",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100,
-                            "minimum": 1,
-                            "description": "Items per page",
-                            "default": 25,
-                            "title": "Page Size"
-                        },
-                        "description": "Items per page",
-                        "example": 25
-                    },
-                    {
-                        "name": "sort_by",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "description": "Sort field: volume, profit, agent_payout, dba_name",
-                            "default": "agent_payout",
-                            "title": "Sort By"
-                        },
-                        "description": "Sort field: volume, profit, agent_payout, dba_name"
-                    },
-                    {
-                        "name": "sort_order",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^(asc|desc)$",
-                            "description": "Sort direction",
-                            "default": "desc",
-                            "title": "Sort Order"
-                        },
-                        "description": "Sort direction"
-                    },
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 100,
-                            "description": "Search by merchant name or ID",
-                            "title": "Search"
-                        },
-                        "description": "Search by merchant name or ID"
-                    },
-                    {
-                        "name": "updated_since",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "anyOf": [
-                                {
-                                    "type": "string",
-                                    "format": "date-time"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "description": "ISO-8601 timestamp for incremental sync",
-                            "title": "Updated Since"
-                        },
-                        "description": "ISO-8601 timestamp for incremental sync"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "422": {
-                        "description": "Invalid sort_by or year/month"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/{year}/{month}/adjustments": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get adjustments",
-                "description": "Returns adjustment line items for a residual report period.",
-                "operationId": "get_adjustments_api_v2_partner_residuals_reports__year___month__adjustments_get",
-                "parameters": [
-                    {
-                        "name": "year",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 2100,
-                            "minimum": 2000,
-                            "description": "Report year",
-                            "title": "Year"
-                        },
-                        "description": "Report year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 12,
-                            "minimum": 1,
-                            "description": "Report month",
-                            "title": "Month"
-                        },
-                        "description": "Report month",
-                        "example": 1
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/{year}/{month}/withholds": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get withholds",
-                "description": "Returns withhold line items for a residual report period.",
-                "operationId": "get_withholds_api_v2_partner_residuals_reports__year___month__withholds_get",
-                "parameters": [
-                    {
-                        "name": "year",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 2100,
-                            "minimum": 2000,
-                            "description": "Report year",
-                            "title": "Year"
-                        },
-                        "description": "Report year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 12,
-                            "minimum": 1,
-                            "description": "Report month",
-                            "title": "Month"
-                        },
-                        "description": "Report month",
-                        "example": 1
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/trend": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get payout trend",
-                "description": "Returns month-over-month payout trend data for the last N months.",
-                "operationId": "get_payout_trend_api_v2_partner_residuals_reports_trend_get",
-                "parameters": [
-                    {
-                        "name": "months",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 24,
-                            "minimum": 1,
-                            "description": "Number of months to include in trend",
-                            "default": 12,
-                            "title": "Months"
-                        },
-                        "description": "Number of months to include in trend",
-                        "example": 12
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/{year}/{month}/top-merchants": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get top merchants",
-                "description": "Returns the top merchants ranked by profit for a residual report period.",
-                "operationId": "get_top_merchants_api_v2_partner_residuals_reports__year___month__top_merchants_get",
-                "parameters": [
-                    {
-                        "name": "year",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 2100,
-                            "minimum": 2000,
-                            "description": "Report year",
-                            "title": "Year"
-                        },
-                        "description": "Report year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 12,
-                            "minimum": 1,
-                            "description": "Report month",
-                            "title": "Month"
-                        },
-                        "description": "Report month",
-                        "example": 1
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 50,
-                            "minimum": 1,
-                            "description": "Number of top merchants to return",
-                            "default": 10,
-                            "title": "Limit"
-                        },
-                        "description": "Number of top merchants to return",
-                        "example": 10
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Residuals data source unavailable"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/reports/{year}/{month}/merchants/export": {
-            "post": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Create merchant export",
-                "description": "Starts an async CSV export of merchant residuals. Returns 202 with an export ID to poll.",
-                "operationId": "create_export_api_v2_partner_residuals_reports__year___month__merchants_export_post",
-                "parameters": [
-                    {
-                        "name": "year",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 2100,
-                            "minimum": 2000,
-                            "description": "Report year",
-                            "title": "Year"
-                        },
-                        "description": "Report year",
-                        "example": 2025
-                    },
-                    {
-                        "name": "month",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 12,
-                            "minimum": 1,
-                            "description": "Report month",
-                            "title": "Month"
-                        },
-                        "description": "Report month",
-                        "example": 1
-                    },
-                    {
-                        "name": "Idempotency-Key",
-                        "in": "header",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "description": "Optional dedup key (24h TTL)",
-                            "title": "Idempotency-Key"
-                        },
-                        "description": "Optional dedup key (24h TTL)"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "202": {
-                        "description": "Export job created"
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "422": {
-                        "description": "Validation error or max concurrent exports reached"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Export service unavailable"
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/exports/{export_id}": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Get export status",
-                "description": "Check the status of an async export job (pending, running, succeeded, failed).",
-                "operationId": "get_export_status_api_v2_partner_residuals_exports__export_id__get",
-                "parameters": [
-                    {
-                        "name": "export_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 100,
-                            "description": "Export job ID",
-                            "title": "Export Id"
-                        },
-                        "description": "Export job ID"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "404": {
-                        "description": "Export not found"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/exports/{export_id}/download": {
-            "get": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "Download export",
-                "description": "Returns a signed GCS URL for downloading a completed export CSV.",
-                "operationId": "download_export_api_v2_partner_residuals_exports__export_id__download_get",
-                "parameters": [
-                    {
-                        "name": "export_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 100,
-                            "description": "Export job ID",
-                            "title": "Export Id"
-                        },
-                        "description": "Export job ID"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "404": {
-                        "description": "Export not found"
-                    },
-                    "422": {
-                        "description": "Export not ready for download"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded"
-                    },
-                    "503": {
-                        "description": "Export download service unavailable"
-                    }
-                }
-            }
-        },
-        "/api/v2/partner/residuals/explain": {
-            "post": {
-                "tags": [
-                    "Residuals",
-                    "Residuals"
-                ],
-                "summary": "AI portfolio insights",
-                "description": "Generate AI-powered portfolio insights for a residual period. Rate limited to 5 req/min.",
-                "operationId": "explain_portfolio_endpoint_api_v2_partner_residuals_explain_post",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Missing or invalid API key"
-                    },
-                    "404": {
-                        "description": "No residual data for the specified period"
-                    },
-                    "422": {
-                        "description": "Invalid request body"
-                    },
-                    "429": {
-                        "description": "Rate limit exceeded (AI sub-limit: 5/min)"
-                    },
-                    "503": {
-                        "description": "AI insights service unavailable"
-                    }
-                }
-            }
-        }
+      }
     },
-    "components": {
-        "securitySchemes": {
-            "apiKey": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "X-Partner-API-Key"
-            }
-        },
-        "schemas": {
-            "HTTPValidationError": {
-                "properties": {
-                    "detail": {
-                        "items": {
-                            "$ref": "#/components/schemas/ValidationError"
-                        },
-                        "type": "array",
-                        "title": "Detail"
-                    }
-                },
-                "type": "object",
-                "title": "HTTPValidationError"
+    "/api/v2/partner/merchants": {
+      "get": {
+        "tags": [
+          "Merchants",
+          "Merchants"
+        ],
+        "summary": "List merchants",
+        "description": "Paginated list of merchants in the partner's portfolio with filtering and sorting.",
+        "operationId": "list_merchants_api_v2_partner_merchants_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
             },
-            "ValidationError": {
-                "properties": {
-                    "loc": {
-                        "items": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "integer"
-                                }
-                            ]
-                        },
-                        "type": "array",
-                        "title": "Location"
-                    },
-                    "msg": {
-                        "type": "string",
-                        "title": "Message"
-                    },
-                    "type": {
-                        "type": "string",
-                        "title": "Error Type"
-                    },
-                    "input": {
-                        "title": "Input"
-                    },
-                    "ctx": {
-                        "type": "object",
-                        "title": "Context"
-                    }
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(active|closed|terminated)$"
                 },
-                "type": "object",
-                "required": [
-                    "loc",
-                    "msg",
-                    "type"
-                ],
-                "title": "ValidationError"
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by merchant status",
+              "title": "Status"
+            },
+            "description": "Filter by merchant status"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by DBA name or merchant ID",
+              "title": "Search"
+            },
+            "description": "Search by DBA name or merchant ID"
+          },
+          {
+            "name": "updated_since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO-8601 timestamp for incremental sync",
+              "title": "Updated Since"
+            },
+            "description": "ISO-8601 timestamp for incremental sync"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(dba_name|merchant_id|status|onboarding_date|state)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Sort field",
+              "default": "dba_name",
+              "title": "Sort By"
+            },
+            "description": "Sort field"
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(asc|desc)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Sort direction",
+              "default": "asc",
+              "title": "Sort Order"
+            },
+            "description": "Sort direction"
+          },
+          {
+            "name": "compliance_status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(compliant|non_compliant|not_started)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by PCI compliance status",
+              "title": "Compliance Status"
+            },
+            "description": "Filter by PCI compliance status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
             }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Merchant data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
         }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}": {
+      "get": {
+        "tags": [
+          "Merchants",
+          "Merchants"
+        ],
+        "summary": "Get merchant detail",
+        "description": "Returns full detail for a single merchant in the partner's portfolio.",
+        "operationId": "get_merchant_api_v2_partner_merchants__merchant_id__get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Merchant data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/status": {
+      "get": {
+        "tags": [
+          "Merchants",
+          "Merchants"
+        ],
+        "summary": "Get merchant status",
+        "description": "Returns a concise status summary for a merchant.",
+        "operationId": "get_merchant_status_api_v2_partner_merchants__merchant_id__status_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Merchant data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/compliance": {
+      "get": {
+        "tags": [
+          "Compliance",
+          "Compliance"
+        ],
+        "summary": "Get merchant compliance status",
+        "description": "Returns current PCI compliance status for a merchant in the partner's portfolio.",
+        "operationId": "get_compliance_status_api_v2_partner_merchants__merchant_id__compliance_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Compliance data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/compliance/history": {
+      "get": {
+        "tags": [
+          "Compliance",
+          "Compliance"
+        ],
+        "summary": "Get merchant compliance history",
+        "description": "Returns paginated compliance history for a merchant with optional date range filtering.",
+        "operationId": "get_compliance_history_api_v2_partner_merchants__merchant_id__compliance_history_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date filter (ISO-8601)",
+              "title": "Start Date"
+            },
+            "description": "Start date filter (ISO-8601)"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date filter (ISO-8601)",
+              "title": "End Date"
+            },
+            "description": "End date filter (ISO-8601)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Compliance data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/pricing/tsys/current": {
+      "get": {
+        "tags": [
+          "Pricing",
+          "Pricing"
+        ],
+        "summary": "Get current TSYS pricing",
+        "description": "Returns the current TSYS PPM pricing configuration for a merchant.",
+        "operationId": "get_current_pricing_api_v2_partner_merchants__merchant_id__pricing_tsys_current_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Pricing data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/pricing/tsys/history": {
+      "get": {
+        "tags": [
+          "Pricing",
+          "Pricing"
+        ],
+        "summary": "Get TSYS pricing history",
+        "description": "Returns pricing change history for a merchant over a configurable lookback period.",
+        "operationId": "get_pricing_history_api_v2_partner_merchants__merchant_id__pricing_tsys_history_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 36,
+              "minimum": 1,
+              "description": "Lookback period in months",
+              "default": 12,
+              "title": "Months"
+            },
+            "description": "Lookback period in months",
+            "example": 12
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Pricing data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/transactions/daily": {
+      "get": {
+        "tags": [
+          "Transactions",
+          "Transactions"
+        ],
+        "summary": "Get daily transaction summary",
+        "description": "Returns daily aggregated transaction totals for a merchant over a date range.",
+        "operationId": "get_daily_transactions_api_v2_partner_merchants__merchant_id__transactions_daily_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date (YYYY-MM-DD)",
+              "title": "Date From"
+            },
+            "description": "Start date (YYYY-MM-DD)",
+            "example": "2025-01-01"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date (YYYY-MM-DD)",
+              "title": "Date To"
+            },
+            "description": "End date (YYYY-MM-DD)",
+            "example": "2025-01-31"
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "IANA timezone for date boundaries",
+              "default": "UTC",
+              "title": "Timezone"
+            },
+            "description": "IANA timezone for date boundaries"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Transaction data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/transactions": {
+      "get": {
+        "tags": [
+          "Transactions",
+          "Transactions"
+        ],
+        "summary": "List transactions",
+        "description": "Paginated transaction detail list for a merchant with card brand and batch filters.",
+        "operationId": "get_transactions_api_v2_partner_merchants__merchant_id__transactions_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start date (YYYY-MM-DD)",
+              "title": "Date From"
+            },
+            "description": "Start date (YYYY-MM-DD)",
+            "example": "2025-01-01"
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End date (YYYY-MM-DD)",
+              "title": "Date To"
+            },
+            "description": "End date (YYYY-MM-DD)",
+            "example": "2025-01-31"
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "IANA timezone for date boundaries",
+              "default": "UTC",
+              "title": "Timezone"
+            },
+            "description": "IANA timezone for date boundaries"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "card_brand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by card brand (Visa, Mastercard, etc.)",
+              "title": "Card Brand"
+            },
+            "description": "Filter by card brand (Visa, Mastercard, etc.)"
+          },
+          {
+            "name": "card_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by card type (credit, debit)",
+              "title": "Card Type"
+            },
+            "description": "Filter by card type (credit, debit)"
+          },
+          {
+            "name": "batch_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by settlement batch ID",
+              "title": "Batch Id"
+            },
+            "description": "Filter by settlement batch ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Transaction data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/gateway-transactions": {
+      "get": {
+        "tags": [
+          "Gateway Transactions",
+          "Gateway Transactions"
+        ],
+        "summary": "List gateway transactions",
+        "description": "Paginated NMI gateway transactions for a merchant with action type and status filters.",
+        "operationId": "list_gateway_transactions_api_v2_partner_merchants__merchant_id__gateway_transactions_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 365,
+              "minimum": 1,
+              "description": "Lookback period in days",
+              "default": 30,
+              "title": "Days"
+            },
+            "description": "Lookback period in days",
+            "example": 30
+          },
+          {
+            "name": "action_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(sale|refund|void|auth|capture)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by action type",
+              "title": "Action Type"
+            },
+            "description": "Filter by action type"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(complete|pending|failed|pendingsettlement)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by status",
+              "title": "Status"
+            },
+            "description": "Filter by status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Gateway transaction service unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/gateway-transactions/{gateway_txn_id}": {
+      "get": {
+        "tags": [
+          "Gateway Transactions",
+          "Gateway Transactions"
+        ],
+        "summary": "Get gateway transaction",
+        "description": "Returns detail for a single NMI gateway transaction.",
+        "operationId": "get_gateway_transaction_api_v2_partner_merchants__merchant_id__gateway_transactions__gateway_txn_id__get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "gateway_txn_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Gateway transaction ID",
+              "title": "Gateway Txn Id"
+            },
+            "description": "Gateway transaction ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "404": {
+            "description": "Transaction not found"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Gateway transaction service unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/statements": {
+      "get": {
+        "tags": [
+          "Statements",
+          "Statements"
+        ],
+        "summary": "List statements",
+        "description": "Paginated list of processor and custom statements for a merchant.",
+        "operationId": "list_statements_api_v2_partner_merchants__merchant_id__statements_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 2100,
+                  "minimum": 2000
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by year",
+              "title": "Year"
+            },
+            "description": "Filter by year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by month",
+              "title": "Month"
+            },
+            "description": "Filter by month",
+            "example": 1
+          },
+          {
+            "name": "statement_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(standard|custom)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by statement type",
+              "title": "Statement Type"
+            },
+            "description": "Filter by statement type"
+          },
+          {
+            "name": "updated_since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO-8601 timestamp for incremental sync",
+              "title": "Updated Since"
+            },
+            "description": "ISO-8601 timestamp for incremental sync"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Statement data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/statements/{statement_id}": {
+      "get": {
+        "tags": [
+          "Statements",
+          "Statements"
+        ],
+        "summary": "Get statement metadata",
+        "description": "Returns metadata for a single statement including period, type, and availability.",
+        "operationId": "get_statement_api_v2_partner_merchants__merchant_id__statements__statement_id__get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "statement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Statement ID",
+              "title": "Statement Id"
+            },
+            "description": "Statement ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "404": {
+            "description": "Statement not found"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Statement data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/merchants/{merchant_id}/statements/{statement_id}/pdf": {
+      "get": {
+        "tags": [
+          "Statements",
+          "Statements"
+        ],
+        "summary": "Download statement PDF",
+        "description": "Download a statement as raw PDF stream or base64-encoded JSON. Use ?format=base64 for JSON delivery.",
+        "operationId": "get_statement_pdf_api_v2_partner_merchants__merchant_id__statements__statement_id__pdf_get",
+        "parameters": [
+          {
+            "name": "merchant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50,
+              "description": "Merchant ID",
+              "title": "Merchant Id"
+            },
+            "description": "Merchant ID",
+            "example": "1234567890"
+          },
+          {
+            "name": "statement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Statement ID",
+              "title": "Statement Id"
+            },
+            "description": "Statement ID"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(stream|base64)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Delivery format: stream (raw PDF) or base64 (JSON envelope)",
+              "default": "stream",
+              "title": "Format"
+            },
+            "description": "Delivery format: stream (raw PDF) or base64 (JSON envelope)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Merchant not in portfolio or insufficient scope"
+          },
+          "404": {
+            "description": "Statement PDF not found"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Statement PDF source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/portfolio/summary": {
+      "get": {
+        "tags": [
+          "Portfolio",
+          "Portfolio"
+        ],
+        "summary": "Get portfolio summary",
+        "description": "Aggregated KPIs across all merchants in the partner's portfolio. Cached 15 minutes per org.",
+        "operationId": "get_portfolio_summary_api_v2_partner_portfolio_summary_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(current_month|last_month|last_30_days)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Aggregation period",
+              "default": "last_30_days",
+              "title": "Period"
+            },
+            "description": "Aggregation period",
+            "example": "last_30_days"
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "IANA timezone for period boundaries",
+              "default": "UTC",
+              "title": "Timezone"
+            },
+            "description": "IANA timezone for period boundaries"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Portfolio data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/portfolio/pricing/tsys/current": {
+      "get": {
+        "tags": [
+          "Portfolio",
+          "Portfolio"
+        ],
+        "summary": "List portfolio TSYS pricing",
+        "description": "Paginated current TSYS pricing for all merchants in the partner's portfolio. effective_rate_bps includes Other Volume Fee (OVF) where applicable.",
+        "operationId": "list_portfolio_pricing_api_v2_partner_portfolio_pricing_tsys_current_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "pricing_model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(IC|Tiered|Flat Rate)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter: IC, Tiered, or Flat Rate",
+              "title": "Pricing Model"
+            },
+            "description": "Filter: IC, Tiered, or Flat Rate"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Search by merchant ID or DBA name",
+              "title": "Search"
+            },
+            "description": "Search by merchant ID or DBA name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Pricing data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "List available reports",
+        "description": "Returns the list of available residual report months for the partner's organization.",
+        "operationId": "list_available_reports_api_v2_partner_residuals_reports_get",
+        "parameters": [
+          {
+            "name": "updated_since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO-8601 timestamp for incremental sync",
+              "title": "Updated Since"
+            },
+            "description": "ISO-8601 timestamp for incremental sync"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/{year}/{month}/summary": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get payout summary",
+        "description": "Returns aggregated payout summary including volume, profit, and agent payout for a month.",
+        "operationId": "get_payout_summary_api_v2_partner_residuals_reports__year___month__summary_get",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Report year",
+              "title": "Year"
+            },
+            "description": "Report year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Report month",
+              "title": "Month"
+            },
+            "description": "Report month",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "404": {
+            "description": "No residual data for the specified period"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/{year}/{month}/merchants": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get merchant residuals",
+        "description": "Paginated merchant-level residual details with search, sort, and incremental sync support.",
+        "operationId": "get_merchant_residuals_api_v2_partner_residuals_reports__year___month__merchants_get",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Report year",
+              "title": "Year"
+            },
+            "description": "Report year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Report month",
+              "title": "Month"
+            },
+            "description": "Report month",
+            "example": 1
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Sort field: volume, profit, agent_payout, dba_name",
+              "default": "agent_payout",
+              "title": "Sort By"
+            },
+            "description": "Sort field: volume, profit, agent_payout, dba_name"
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(asc|desc)$",
+              "description": "Sort direction",
+              "default": "desc",
+              "title": "Sort Order"
+            },
+            "description": "Sort direction"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Search by merchant name or ID",
+              "title": "Search"
+            },
+            "description": "Search by merchant name or ID"
+          },
+          {
+            "name": "updated_since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO-8601 timestamp for incremental sync",
+              "title": "Updated Since"
+            },
+            "description": "ISO-8601 timestamp for incremental sync"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "422": {
+            "description": "Invalid sort_by or year/month"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/{year}/{month}/adjustments": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get adjustments",
+        "description": "Returns adjustment line items for a residual report period.",
+        "operationId": "get_adjustments_api_v2_partner_residuals_reports__year___month__adjustments_get",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Report year",
+              "title": "Year"
+            },
+            "description": "Report year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Report month",
+              "title": "Month"
+            },
+            "description": "Report month",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/{year}/{month}/withholds": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get withholds",
+        "description": "Returns withhold line items for a residual report period.",
+        "operationId": "get_withholds_api_v2_partner_residuals_reports__year___month__withholds_get",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Report year",
+              "title": "Year"
+            },
+            "description": "Report year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Report month",
+              "title": "Month"
+            },
+            "description": "Report month",
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/trend": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get payout trend",
+        "description": "Returns month-over-month payout trend data for the last N months.",
+        "operationId": "get_payout_trend_api_v2_partner_residuals_reports_trend_get",
+        "parameters": [
+          {
+            "name": "months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 24,
+              "minimum": 1,
+              "description": "Number of months to include in trend",
+              "default": 12,
+              "title": "Months"
+            },
+            "description": "Number of months to include in trend",
+            "example": 12
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/{year}/{month}/top-merchants": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get top merchants",
+        "description": "Returns the top merchants ranked by profit for a residual report period.",
+        "operationId": "get_top_merchants_api_v2_partner_residuals_reports__year___month__top_merchants_get",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Report year",
+              "title": "Year"
+            },
+            "description": "Report year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Report month",
+              "title": "Month"
+            },
+            "description": "Report month",
+            "example": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "description": "Number of top merchants to return",
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Number of top merchants to return",
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Residuals data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/reports/{year}/{month}/merchants/export": {
+      "post": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Create merchant export",
+        "description": "Starts an async CSV export of merchant residuals. Returns 202 with an export ID to poll.",
+        "operationId": "create_export_api_v2_partner_residuals_reports__year___month__merchants_export_post",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Report year",
+              "title": "Year"
+            },
+            "description": "Report year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Report month",
+              "title": "Month"
+            },
+            "description": "Report month",
+            "example": 1
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Optional dedup key (24h TTL)",
+              "title": "Idempotency-Key"
+            },
+            "description": "Optional dedup key (24h TTL)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "202": {
+            "description": "Export job created"
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "422": {
+            "description": "Validation error or max concurrent exports reached"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Export service unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/exports/{export_id}": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Get export status",
+        "description": "Check the status of an async export job (pending, running, succeeded, failed).",
+        "operationId": "get_export_status_api_v2_partner_residuals_exports__export_id__get",
+        "parameters": [
+          {
+            "name": "export_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Export job ID",
+              "title": "Export Id"
+            },
+            "description": "Export job ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "404": {
+            "description": "Export not found"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/exports/{export_id}/download": {
+      "get": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "Download export",
+        "description": "Returns a signed GCS URL for downloading a completed export CSV.",
+        "operationId": "download_export_api_v2_partner_residuals_exports__export_id__download_get",
+        "parameters": [
+          {
+            "name": "export_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "description": "Export job ID",
+              "title": "Export Id"
+            },
+            "description": "Export job ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "404": {
+            "description": "Export not found"
+          },
+          "422": {
+            "description": "Export not ready for download"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Export download service unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/partner/residuals/explain": {
+      "post": {
+        "tags": [
+          "Residuals",
+          "Residuals"
+        ],
+        "summary": "AI portfolio insights",
+        "description": "Generate AI-powered portfolio insights for a residual period. Rate limited to 5 req/min.",
+        "operationId": "explain_portfolio_endpoint_api_v2_partner_residuals_explain_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "404": {
+            "description": "No residual data for the specified period"
+          },
+          "422": {
+            "description": "Invalid request body"
+          },
+          "429": {
+            "description": "Rate limit exceeded (AI sub-limit: 5/min)"
+          },
+          "503": {
+            "description": "AI insights service unavailable"
+          }
+        }
+      }
     }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
 }
