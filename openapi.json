@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.3",
   "info": {
     "title": "Partner API",
     "description": "External API for ISO partners to access merchant data, pricing, and reports",
@@ -73,17 +73,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(active|closed|terminated)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(active|closed|terminated)$",
               "description": "Filter by merchant status",
-              "title": "Status"
+              "title": "Status",
+              "nullable": true
             },
             "description": "Filter by merchant status"
           },
@@ -92,17 +86,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 200
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 200,
               "description": "Search by DBA name or merchant ID",
-              "title": "Search"
+              "title": "Search",
+              "nullable": true
             },
             "description": "Search by DBA name or merchant ID"
           },
@@ -111,17 +99,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date-time",
               "description": "ISO-8601 timestamp for incremental sync",
-              "title": "Updated Since"
+              "title": "Updated Since",
+              "nullable": true
             },
             "description": "ISO-8601 timestamp for incremental sync"
           },
@@ -130,18 +112,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(dba_name|merchant_id|status|onboarding_date|state)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(dba_name|merchant_id|status|onboarding_date|state)$",
               "description": "Sort field",
               "default": "dba_name",
-              "title": "Sort By"
+              "title": "Sort By",
+              "nullable": true
             },
             "description": "Sort field"
           },
@@ -150,18 +126,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(asc|desc)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(asc|desc)$",
               "description": "Sort direction",
               "default": "asc",
-              "title": "Sort Order"
+              "title": "Sort Order",
+              "nullable": true
             },
             "description": "Sort direction"
           },
@@ -170,17 +140,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(compliant|non_compliant|not_started)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(compliant|non_compliant|not_started)$",
               "description": "Filter by PCI compliance status",
-              "title": "Compliance Status"
+              "title": "Compliance Status",
+              "nullable": true
             },
             "description": "Filter by PCI compliance status"
           }
@@ -450,17 +414,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date-time",
               "description": "Start date filter (ISO-8601)",
-              "title": "Start Date"
+              "title": "Start Date",
+              "nullable": true
             },
             "description": "Start date filter (ISO-8601)"
           },
@@ -469,17 +427,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date-time",
               "description": "End date filter (ISO-8601)",
-              "title": "End Date"
+              "title": "End Date",
+              "nullable": true
             },
             "description": "End date filter (ISO-8601)"
           }
@@ -651,6 +603,106 @@
         }
       }
     },
+    "/api/v2/partner/pricing/tsys": {
+      "get": {
+        "tags": [
+          "Pricing",
+          "Pricing"
+        ],
+        "summary": "List portfolio TSYS pricing",
+        "description": "Paginated current TSYS pricing for all merchants in the partner's portfolio. effective_rate_bps includes Other Volume Fee (OVF) where applicable.",
+        "operationId": "list_portfolio_pricing_api_v2_partner_pricing_tsys_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "pricing_model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(IC|Tiered|Flat Rate)$",
+              "description": "Filter: IC, Tiered, or Flat Rate",
+              "title": "Pricing Model",
+              "nullable": true
+            },
+            "description": "Filter: IC, Tiered, or Flat Rate"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Search by merchant ID or DBA name",
+              "title": "Search",
+              "nullable": true
+            },
+            "description": "Search by merchant ID or DBA name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Pricing data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/partner/merchants/{merchant_id}/transactions/daily": {
       "get": {
         "tags": [
@@ -680,17 +732,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date",
               "description": "Start date (YYYY-MM-DD)",
-              "title": "Date From"
+              "title": "Date From",
+              "nullable": true
             },
             "description": "Start date (YYYY-MM-DD)",
             "example": "2025-01-01"
@@ -700,17 +746,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date",
               "description": "End date (YYYY-MM-DD)",
-              "title": "Date To"
+              "title": "Date To",
+              "nullable": true
             },
             "description": "End date (YYYY-MM-DD)",
             "example": "2025-01-31"
@@ -720,18 +760,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 50,
               "description": "IANA timezone for date boundaries",
               "default": "UTC",
-              "title": "Timezone"
+              "title": "Timezone",
+              "nullable": true
             },
             "description": "IANA timezone for date boundaries"
           }
@@ -799,17 +833,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date",
               "description": "Start date (YYYY-MM-DD)",
-              "title": "Date From"
+              "title": "Date From",
+              "nullable": true
             },
             "description": "Start date (YYYY-MM-DD)",
             "example": "2025-01-01"
@@ -819,17 +847,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date",
               "description": "End date (YYYY-MM-DD)",
-              "title": "Date To"
+              "title": "Date To",
+              "nullable": true
             },
             "description": "End date (YYYY-MM-DD)",
             "example": "2025-01-31"
@@ -839,18 +861,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 50,
               "description": "IANA timezone for date boundaries",
               "default": "UTC",
-              "title": "Timezone"
+              "title": "Timezone",
+              "nullable": true
             },
             "description": "IANA timezone for date boundaries"
           },
@@ -888,17 +904,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 50,
               "description": "Filter by card brand (Visa, Mastercard, etc.)",
-              "title": "Card Brand"
+              "title": "Card Brand",
+              "nullable": true
             },
             "description": "Filter by card brand (Visa, Mastercard, etc.)"
           },
@@ -907,17 +917,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 50,
               "description": "Filter by card type (credit, debit)",
-              "title": "Card Type"
+              "title": "Card Type",
+              "nullable": true
             },
             "description": "Filter by card type (credit, debit)"
           },
@@ -926,17 +930,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 100
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 100,
               "description": "Filter by settlement batch ID",
-              "title": "Batch Id"
+              "title": "Batch Id",
+              "nullable": true
             },
             "description": "Filter by settlement batch ID"
           }
@@ -1048,17 +1046,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(sale|refund|void|auth|capture)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(sale|refund|void|auth|capture)$",
               "description": "Filter by action type",
-              "title": "Action Type"
+              "title": "Action Type",
+              "nullable": true
             },
             "description": "Filter by action type"
           },
@@ -1067,17 +1059,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(complete|pending|failed|pendingsettlement)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(complete|pending|failed|pendingsettlement)$",
               "description": "Filter by status",
-              "title": "Status"
+              "title": "Status",
+              "nullable": true
             },
             "description": "Filter by status"
           }
@@ -1191,6 +1177,123 @@
         }
       }
     },
+    "/api/v2/partner/statements": {
+      "get": {
+        "tags": [
+          "Statements",
+          "Statements"
+        ],
+        "summary": "List statements across portfolio",
+        "description": "Paginated metadata-only statement list across all merchants in the partner portfolio.",
+        "operationId": "list_all_statements_api_v2_partner_statements_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number",
+            "example": 1
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Items per page",
+              "default": 25,
+              "title": "Page Size"
+            },
+            "description": "Items per page",
+            "example": 25
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
+              "description": "Filter by year",
+              "title": "Year",
+              "nullable": true
+            },
+            "description": "Filter by year",
+            "example": 2025
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "description": "Filter by month",
+              "title": "Month",
+              "nullable": true
+            },
+            "description": "Filter by month",
+            "example": 1
+          },
+          {
+            "name": "statement_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(standard|custom)$",
+              "description": "Filter by statement type",
+              "title": "Statement Type",
+              "nullable": true
+            },
+            "description": "Filter by statement type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "Insufficient scope"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Statement data source unavailable"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/partner/merchants/{merchant_id}/statements": {
       "get": {
         "tags": [
@@ -1249,18 +1352,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 2100,
-                  "minimum": 2000
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "integer",
+              "maximum": 2100,
+              "minimum": 2000,
               "description": "Filter by year",
-              "title": "Year"
+              "title": "Year",
+              "nullable": true
             },
             "description": "Filter by year",
             "example": 2025
@@ -1270,18 +1367,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 12,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
               "description": "Filter by month",
-              "title": "Month"
+              "title": "Month",
+              "nullable": true
             },
             "description": "Filter by month",
             "example": 1
@@ -1291,38 +1382,13 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(standard|custom)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(standard|custom)$",
               "description": "Filter by statement type",
-              "title": "Statement Type"
+              "title": "Statement Type",
+              "nullable": true
             },
             "description": "Filter by statement type"
-          },
-          {
-            "name": "updated_since",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "ISO-8601 timestamp for incremental sync",
-              "title": "Updated Since"
-            },
-            "description": "ISO-8601 timestamp for incremental sync"
           }
         ],
         "responses": {
@@ -1476,18 +1542,12 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(stream|base64)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "pattern": "^(stream|base64)$",
               "description": "Delivery format: stream (raw PDF) or base64 (JSON envelope)",
               "default": "stream",
-              "title": "Format"
+              "title": "Format",
+              "nullable": true
             },
             "description": "Delivery format: stream (raw PDF) or base64 (JSON envelope)"
           }
@@ -1529,204 +1589,6 @@
         }
       }
     },
-    "/api/v2/partner/portfolio/summary": {
-      "get": {
-        "tags": [
-          "Portfolio",
-          "Portfolio"
-        ],
-        "summary": "Get portfolio summary",
-        "description": "Aggregated KPIs across all merchants in the partner's portfolio. Cached 15 minutes per org.",
-        "operationId": "get_portfolio_summary_api_v2_partner_portfolio_summary_get",
-        "parameters": [
-          {
-            "name": "period",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(current_month|last_month|last_30_days)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Aggregation period",
-              "default": "last_30_days",
-              "title": "Period"
-            },
-            "description": "Aggregation period",
-            "example": "last_30_days"
-          },
-          {
-            "name": "timezone",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 50
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "IANA timezone for period boundaries",
-              "default": "UTC",
-              "title": "Timezone"
-            },
-            "description": "IANA timezone for period boundaries"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid API key"
-          },
-          "403": {
-            "description": "Insufficient scope"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "503": {
-            "description": "Portfolio data source unavailable"
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v2/partner/portfolio/pricing/tsys/current": {
-      "get": {
-        "tags": [
-          "Portfolio",
-          "Portfolio"
-        ],
-        "summary": "List portfolio TSYS pricing",
-        "description": "Paginated current TSYS pricing for all merchants in the partner's portfolio. effective_rate_bps includes Other Volume Fee (OVF) where applicable.",
-        "operationId": "list_portfolio_pricing_api_v2_partner_portfolio_pricing_tsys_current_get",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "description": "Page number",
-              "default": 1,
-              "title": "Page"
-            },
-            "description": "Page number",
-            "example": 1
-          },
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 100,
-              "minimum": 1,
-              "description": "Items per page",
-              "default": 25,
-              "title": "Page Size"
-            },
-            "description": "Items per page",
-            "example": 25
-          },
-          {
-            "name": "pricing_model",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "pattern": "^(IC|Tiered|Flat Rate)$"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Filter: IC, Tiered, or Flat Rate",
-              "title": "Pricing Model"
-            },
-            "description": "Filter: IC, Tiered, or Flat Rate"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 200
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Search by merchant ID or DBA name",
-              "title": "Search"
-            },
-            "description": "Search by merchant ID or DBA name"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid API key"
-          },
-          "403": {
-            "description": "Insufficient scope"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "503": {
-            "description": "Pricing data source unavailable"
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v2/partner/residuals/reports": {
       "get": {
         "tags": [
@@ -1742,17 +1604,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date-time",
               "description": "ISO-8601 timestamp for incremental sync",
-              "title": "Updated Since"
+              "title": "Updated Since",
+              "nullable": true
             },
             "description": "ISO-8601 timestamp for incremental sync"
           }
@@ -1970,17 +1826,11 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "format": "date-time",
               "description": "ISO-8601 timestamp for incremental sync",
-              "title": "Updated Since"
+              "title": "Updated Since",
+              "nullable": true
             },
             "description": "ISO-8601 timestamp for incremental sync"
           }

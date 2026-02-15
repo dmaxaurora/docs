@@ -64,6 +64,7 @@
     {
       "group": "Pricing",
       "pages": [
+        "api-reference/pricing/portfolio",
         "api-reference/pricing/current",
         "api-reference/pricing/history"
       ]
@@ -81,15 +82,9 @@
       "group": "Statements",
       "pages": [
         "api-reference/statements/list",
+        "api-reference/statements/list-by-merchant",
         "api-reference/statements/get",
         "api-reference/statements/pdf"
-      ]
-    },
-    {
-      "group": "Portfolio",
-      "pages": [
-        "api-reference/portfolio/summary",
-        "api-reference/portfolio/pricing-current"
       ]
     },
     {
