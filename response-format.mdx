@@ -63,7 +63,7 @@ List endpoints return paginated results with metadata:
 ```python Python
 import requests
 
-url = "https://modulate.aurorapayments.net/api/v2/partner/merchants"
+url = "https://modulate.aurorapayments.net/api/partner/merchants"
 headers = {"X-Partner-API-Key": "pk_live_YOUR_KEY_HERE"}
 page = 1
 
@@ -87,7 +87,7 @@ let page = 1;
 
 while (true) {
   const resp = await fetch(
-    `https://modulate.aurorapayments.net/api/v2/partner/merchants?page=${page}&page_size=100`,
+    `https://modulate.aurorapayments.net/api/partner/merchants?page=${page}&page_size=100`,
     { headers }
   );
   const { data: merchants, meta } = await resp.json();

@@ -45,7 +45,7 @@ print(f"Export created: {export_id}")
 
 ```bash cURL
 curl -X POST -H "X-Partner-API-Key: pk_live_YOUR_KEY_HERE" \
-  "https://modulate.aurorapayments.net/api/v2/partner/residuals/reports/2026/1/merchants/export"
+  "https://modulate.aurorapayments.net/api/partner/residuals/reports/2026/1/merchants/export"
 ```
 
 </CodeGroup>
@@ -121,7 +121,7 @@ with open("residuals_2026_01.csv", "wb") as f:
 ```bash cURL
 # Get the signed URL
 curl -H "X-Partner-API-Key: pk_live_YOUR_KEY_HERE" \
-  "https://modulate.aurorapayments.net/api/v2/partner/residuals/exports/{export_id}/download"
+  "https://modulate.aurorapayments.net/api/partner/residuals/exports/{export_id}/download"
 
 # Download the file (use the URL from the response)
 curl -o residuals.csv "SIGNED_URL_HERE"

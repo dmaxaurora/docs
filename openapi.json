@@ -6,14 +6,14 @@
     "version": "0.1.0"
   },
   "paths": {
-    "/api/v2/partner/health": {
+    "/api/partner/health": {
       "get": {
         "tags": [
           "Health"
         ],
         "summary": "Health check",
         "description": "Returns service status and database connectivity. No authentication required.",
-        "operationId": "health_check_api_v2_partner_health_get",
+        "operationId": "health_check_api_partner_health_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -29,7 +29,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants": {
+    "/api/partner/merchants": {
       "get": {
         "tags": [
           "Merchants",
@@ -37,7 +37,7 @@
         ],
         "summary": "List merchants",
         "description": "Paginated list of merchants in the partner's portfolio with filtering and sorting.",
-        "operationId": "list_merchants_api_v2_partner_merchants_get",
+        "operationId": "list_merchants_api_partner_merchants_get",
         "parameters": [
           {
             "name": "page",
@@ -183,7 +183,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}": {
+    "/api/partner/merchants/{merchant_id}": {
       "get": {
         "tags": [
           "Merchants",
@@ -191,7 +191,7 @@
         ],
         "summary": "Get merchant detail",
         "description": "Returns full detail for a single merchant in the partner's portfolio.",
-        "operationId": "get_merchant_api_v2_partner_merchants__merchant_id__get",
+        "operationId": "get_merchant_api_partner_merchants__merchant_id__get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -242,7 +242,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/status": {
+    "/api/partner/merchants/{merchant_id}/status": {
       "get": {
         "tags": [
           "Merchants",
@@ -250,7 +250,7 @@
         ],
         "summary": "Get merchant status",
         "description": "Returns a concise status summary for a merchant.",
-        "operationId": "get_merchant_status_api_v2_partner_merchants__merchant_id__status_get",
+        "operationId": "get_merchant_status_api_partner_merchants__merchant_id__status_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -301,7 +301,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/compliance": {
+    "/api/partner/merchants/{merchant_id}/compliance": {
       "get": {
         "tags": [
           "Compliance",
@@ -309,7 +309,7 @@
         ],
         "summary": "Get merchant compliance status",
         "description": "Returns current PCI compliance status for a merchant in the partner's portfolio.",
-        "operationId": "get_compliance_status_api_v2_partner_merchants__merchant_id__compliance_get",
+        "operationId": "get_compliance_status_api_partner_merchants__merchant_id__compliance_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -359,7 +359,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/compliance/history": {
+    "/api/partner/merchants/{merchant_id}/compliance/history": {
       "get": {
         "tags": [
           "Compliance",
@@ -367,7 +367,7 @@
         ],
         "summary": "Get merchant compliance history",
         "description": "Returns paginated compliance history for a merchant with optional date range filtering.",
-        "operationId": "get_compliance_history_api_v2_partner_merchants__merchant_id__compliance_history_get",
+        "operationId": "get_compliance_history_api_partner_merchants__merchant_id__compliance_history_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -470,7 +470,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/pricing/tsys/current": {
+    "/api/partner/merchants/{merchant_id}/pricing/tsys/current": {
       "get": {
         "tags": [
           "Pricing",
@@ -478,7 +478,7 @@
         ],
         "summary": "Get current TSYS pricing",
         "description": "Returns the current TSYS PPM pricing configuration for a merchant.",
-        "operationId": "get_current_pricing_api_v2_partner_merchants__merchant_id__pricing_tsys_current_get",
+        "operationId": "get_current_pricing_api_partner_merchants__merchant_id__pricing_tsys_current_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -529,7 +529,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/pricing/tsys/history": {
+    "/api/partner/merchants/{merchant_id}/pricing/tsys/history": {
       "get": {
         "tags": [
           "Pricing",
@@ -537,7 +537,7 @@
         ],
         "summary": "Get TSYS pricing history",
         "description": "Returns pricing change history for a merchant over a configurable lookback period.",
-        "operationId": "get_pricing_history_api_v2_partner_merchants__merchant_id__pricing_tsys_history_get",
+        "operationId": "get_pricing_history_api_partner_merchants__merchant_id__pricing_tsys_history_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -603,7 +603,7 @@
         }
       }
     },
-    "/api/v2/partner/pricing/tsys": {
+    "/api/partner/pricing/tsys": {
       "get": {
         "tags": [
           "Pricing",
@@ -611,7 +611,7 @@
         ],
         "summary": "List portfolio TSYS pricing",
         "description": "Paginated current TSYS pricing for all merchants in the partner's portfolio. effective_rate_bps includes Other Volume Fee (OVF) where applicable.",
-        "operationId": "list_portfolio_pricing_api_v2_partner_pricing_tsys_get",
+        "operationId": "list_portfolio_pricing_api_partner_pricing_tsys_get",
         "parameters": [
           {
             "name": "page",
@@ -703,7 +703,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/transactions/daily": {
+    "/api/partner/merchants/{merchant_id}/transactions/daily": {
       "get": {
         "tags": [
           "Transactions",
@@ -711,7 +711,7 @@
         ],
         "summary": "Get daily transaction summary",
         "description": "Returns daily aggregated transaction totals for a merchant over a date range.",
-        "operationId": "get_daily_transactions_api_v2_partner_merchants__merchant_id__transactions_daily_get",
+        "operationId": "get_daily_transactions_api_partner_merchants__merchant_id__transactions_daily_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -804,7 +804,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/transactions": {
+    "/api/partner/merchants/{merchant_id}/transactions": {
       "get": {
         "tags": [
           "Transactions",
@@ -812,7 +812,7 @@
         ],
         "summary": "List transactions",
         "description": "Paginated transaction detail list for a merchant with card brand and batch filters.",
-        "operationId": "get_transactions_api_v2_partner_merchants__merchant_id__transactions_get",
+        "operationId": "get_transactions_api_partner_merchants__merchant_id__transactions_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -973,7 +973,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/gateway-transactions": {
+    "/api/partner/merchants/{merchant_id}/gateway-transactions": {
       "get": {
         "tags": [
           "Gateway Transactions",
@@ -981,7 +981,7 @@
         ],
         "summary": "List gateway transactions",
         "description": "Paginated NMI gateway transactions for a merchant with action type and status filters.",
-        "operationId": "list_gateway_transactions_api_v2_partner_merchants__merchant_id__gateway_transactions_get",
+        "operationId": "list_gateway_transactions_api_partner_merchants__merchant_id__gateway_transactions_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -1102,7 +1102,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/gateway-transactions/{gateway_txn_id}": {
+    "/api/partner/merchants/{merchant_id}/gateway-transactions/{gateway_txn_id}": {
       "get": {
         "tags": [
           "Gateway Transactions",
@@ -1110,7 +1110,7 @@
         ],
         "summary": "Get gateway transaction",
         "description": "Returns detail for a single NMI gateway transaction.",
-        "operationId": "get_gateway_transaction_api_v2_partner_merchants__merchant_id__gateway_transactions__gateway_txn_id__get",
+        "operationId": "get_gateway_transaction_api_partner_merchants__merchant_id__gateway_transactions__gateway_txn_id__get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -1177,7 +1177,7 @@
         }
       }
     },
-    "/api/v2/partner/statements": {
+    "/api/partner/statements": {
       "get": {
         "tags": [
           "Statements",
@@ -1185,7 +1185,7 @@
         ],
         "summary": "List statements across portfolio",
         "description": "Paginated metadata-only statement list across all merchants in the partner portfolio.",
-        "operationId": "list_all_statements_api_v2_partner_statements_get",
+        "operationId": "list_all_statements_api_partner_statements_get",
         "parameters": [
           {
             "name": "page",
@@ -1294,7 +1294,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/statements": {
+    "/api/partner/merchants/{merchant_id}/statements": {
       "get": {
         "tags": [
           "Statements",
@@ -1302,7 +1302,7 @@
         ],
         "summary": "List statements",
         "description": "Paginated list of processor and custom statements for a merchant.",
-        "operationId": "list_statements_api_v2_partner_merchants__merchant_id__statements_get",
+        "operationId": "list_statements_api_partner_merchants__merchant_id__statements_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -1425,7 +1425,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/statements/{statement_id}": {
+    "/api/partner/merchants/{merchant_id}/statements/{statement_id}": {
       "get": {
         "tags": [
           "Statements",
@@ -1433,7 +1433,7 @@
         ],
         "summary": "Get statement metadata",
         "description": "Returns metadata for a single statement including period, type, and availability.",
-        "operationId": "get_statement_api_v2_partner_merchants__merchant_id__statements__statement_id__get",
+        "operationId": "get_statement_api_partner_merchants__merchant_id__statements__statement_id__get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -1500,7 +1500,7 @@
         }
       }
     },
-    "/api/v2/partner/merchants/{merchant_id}/statements/{statement_id}/pdf": {
+    "/api/partner/merchants/{merchant_id}/statements/{statement_id}/pdf": {
       "get": {
         "tags": [
           "Statements",
@@ -1508,7 +1508,7 @@
         ],
         "summary": "Download statement PDF",
         "description": "Download a statement as raw PDF stream or base64-encoded JSON. Use ?format=base64 for JSON delivery.",
-        "operationId": "get_statement_pdf_api_v2_partner_merchants__merchant_id__statements__statement_id__pdf_get",
+        "operationId": "get_statement_pdf_api_partner_merchants__merchant_id__statements__statement_id__pdf_get",
         "parameters": [
           {
             "name": "merchant_id",
@@ -1589,7 +1589,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports": {
+    "/api/partner/residuals/reports": {
       "get": {
         "tags": [
           "Residuals",
@@ -1597,7 +1597,7 @@
         ],
         "summary": "List available reports",
         "description": "Returns the list of available residual report months for the partner's organization.",
-        "operationId": "list_available_reports_api_v2_partner_residuals_reports_get",
+        "operationId": "list_available_reports_api_partner_residuals_reports_get",
         "parameters": [
           {
             "name": "updated_since",
@@ -1644,7 +1644,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/{year}/{month}/summary": {
+    "/api/partner/residuals/reports/{year}/{month}/summary": {
       "get": {
         "tags": [
           "Residuals",
@@ -1652,7 +1652,7 @@
         ],
         "summary": "Get payout summary",
         "description": "Returns aggregated payout summary including volume, profit, and agent payout for a month.",
-        "operationId": "get_payout_summary_api_v2_partner_residuals_reports__year___month__summary_get",
+        "operationId": "get_payout_summary_api_partner_residuals_reports__year___month__summary_get",
         "parameters": [
           {
             "name": "year",
@@ -1717,7 +1717,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/{year}/{month}/merchants": {
+    "/api/partner/residuals/reports/{year}/{month}/merchants": {
       "get": {
         "tags": [
           "Residuals",
@@ -1725,7 +1725,7 @@
         ],
         "summary": "Get merchant residuals",
         "description": "Paginated merchant-level residual details with search, sort, and incremental sync support.",
-        "operationId": "get_merchant_residuals_api_v2_partner_residuals_reports__year___month__merchants_get",
+        "operationId": "get_merchant_residuals_api_partner_residuals_reports__year___month__merchants_get",
         "parameters": [
           {
             "name": "year",
@@ -1859,7 +1859,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/{year}/{month}/adjustments": {
+    "/api/partner/residuals/reports/{year}/{month}/adjustments": {
       "get": {
         "tags": [
           "Residuals",
@@ -1867,7 +1867,7 @@
         ],
         "summary": "Get adjustments",
         "description": "Returns adjustment line items for a residual report period.",
-        "operationId": "get_adjustments_api_v2_partner_residuals_reports__year___month__adjustments_get",
+        "operationId": "get_adjustments_api_partner_residuals_reports__year___month__adjustments_get",
         "parameters": [
           {
             "name": "year",
@@ -1929,7 +1929,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/{year}/{month}/withholds": {
+    "/api/partner/residuals/reports/{year}/{month}/withholds": {
       "get": {
         "tags": [
           "Residuals",
@@ -1937,7 +1937,7 @@
         ],
         "summary": "Get withholds",
         "description": "Returns withhold line items for a residual report period.",
-        "operationId": "get_withholds_api_v2_partner_residuals_reports__year___month__withholds_get",
+        "operationId": "get_withholds_api_partner_residuals_reports__year___month__withholds_get",
         "parameters": [
           {
             "name": "year",
@@ -1999,7 +1999,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/trend": {
+    "/api/partner/residuals/reports/trend": {
       "get": {
         "tags": [
           "Residuals",
@@ -2007,7 +2007,7 @@
         ],
         "summary": "Get payout trend",
         "description": "Returns month-over-month payout trend data for the last N months.",
-        "operationId": "get_payout_trend_api_v2_partner_residuals_reports_trend_get",
+        "operationId": "get_payout_trend_api_partner_residuals_reports_trend_get",
         "parameters": [
           {
             "name": "months",
@@ -2056,7 +2056,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/{year}/{month}/top-merchants": {
+    "/api/partner/residuals/reports/{year}/{month}/top-merchants": {
       "get": {
         "tags": [
           "Residuals",
@@ -2064,7 +2064,7 @@
         ],
         "summary": "Get top merchants",
         "description": "Returns the top merchants ranked by profit for a residual report period.",
-        "operationId": "get_top_merchants_api_v2_partner_residuals_reports__year___month__top_merchants_get",
+        "operationId": "get_top_merchants_api_partner_residuals_reports__year___month__top_merchants_get",
         "parameters": [
           {
             "name": "year",
@@ -2141,7 +2141,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/reports/{year}/{month}/merchants/export": {
+    "/api/partner/residuals/reports/{year}/{month}/merchants/export": {
       "post": {
         "tags": [
           "Residuals",
@@ -2149,7 +2149,7 @@
         ],
         "summary": "Create merchant export",
         "description": "Starts an async CSV export of merchant residuals. Returns 202 with an export ID to poll.",
-        "operationId": "create_export_api_v2_partner_residuals_reports__year___month__merchants_export_post",
+        "operationId": "create_export_api_partner_residuals_reports__year___month__merchants_export_post",
         "parameters": [
           {
             "name": "year",
@@ -2218,7 +2218,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/exports/{export_id}": {
+    "/api/partner/residuals/exports/{export_id}": {
       "get": {
         "tags": [
           "Residuals",
@@ -2226,7 +2226,7 @@
         ],
         "summary": "Get export status",
         "description": "Check the status of an async export job (pending, running, succeeded, failed).",
-        "operationId": "get_export_status_api_v2_partner_residuals_exports__export_id__get",
+        "operationId": "get_export_status_api_partner_residuals_exports__export_id__get",
         "parameters": [
           {
             "name": "export_id",
@@ -2273,7 +2273,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/exports/{export_id}/download": {
+    "/api/partner/residuals/exports/{export_id}/download": {
       "get": {
         "tags": [
           "Residuals",
@@ -2281,7 +2281,7 @@
         ],
         "summary": "Download export",
         "description": "Returns a signed GCS URL for downloading a completed export CSV.",
-        "operationId": "download_export_api_v2_partner_residuals_exports__export_id__download_get",
+        "operationId": "download_export_api_partner_residuals_exports__export_id__download_get",
         "parameters": [
           {
             "name": "export_id",
@@ -2324,7 +2324,7 @@
         }
       }
     },
-    "/api/v2/partner/residuals/explain": {
+    "/api/partner/residuals/explain": {
       "post": {
         "tags": [
           "Residuals",
@@ -2332,7 +2332,7 @@
         ],
         "summary": "AI portfolio insights",
         "description": "Generate AI-powered portfolio insights for a residual period. Rate limited to 5 req/min.",
-        "operationId": "explain_portfolio_endpoint_api_v2_partner_residuals_explain_post",
+        "operationId": "explain_portfolio_endpoint_api_partner_residuals_explain_post",
         "responses": {
           "200": {
             "description": "Successful Response",
